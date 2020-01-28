@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.RegisterActivity">
+    tools:context=".RegisterActivity">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -25,28 +25,53 @@
             android:layout_marginTop="60dp"
             android:layout_marginLeft="25dp" />
 
-        <TextView
-            android:id="@+id/tv_subtitle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/tag"
-            android:textSize="17sp"
-            android:fontFamily="@font/roboto_regular"
-            android:layout_marginStart="25dp"
-            android:layout_marginBottom="50dp"
-            android:layout_marginLeft="25dp" />
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <EditText
+                android:id="@+id/et_firstName"
+                android:layout_width="165dp"
+                android:layout_height="50dp"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                android:layout_marginBottom="10dp"
+                android:background="@drawable/et_custom"
+                android:fontFamily="@font/roboto_regular"
+                android:hint="First Name"
+                android:inputType="textPersonName"
+                android:padding="15dp"
+                android:textSize="15sp" />
+
+            <EditText
+                android:id="@+id/et_lastName"
+                android:layout_width="165dp"
+                android:layout_height="50dp"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                android:layout_marginBottom="10dp"
+                android:background="@drawable/et_custom"
+                android:fontFamily="@font/roboto_regular"
+                android:hint="Last Name"
+                android:inputType="textPersonName"
+                android:padding="15dp"
+                android:textSize="15sp" />
+
+        </LinearLayout>
+
 
         <EditText
-            android:id="@+id/et_name"
+            android:id="@+id/et_id"
             android:layout_width="match_parent"
             android:layout_height="50dp"
-            android:hint="@string/your_name"
+            android:hint="ID"
             android:layout_marginLeft="20dp"
             android:layout_marginRight="20dp"
             android:layout_marginBottom="10dp"
             android:padding="15dp"
-            android:inputType="textPersonName"
             android:fontFamily="@font/roboto_regular"
+            android:inputType="textEmailAddress"
             android:background="@drawable/et_custom"
             android:textSize="15sp" />
 

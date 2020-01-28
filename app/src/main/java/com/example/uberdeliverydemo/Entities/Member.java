@@ -22,6 +22,21 @@ public class Member {
         this.emailAddress = emailAdress;
     }
 
+    public Member(String id, String firstName, String lastName, String emailAddress) {
+        this.id = id;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.phoneNumber = "NULL";
+        this.address = "NULL";
+        this.emailAddress = emailAddress;
+    }
+
+    private String getPhoneNumberFromOS() {
+
+        //TODO: Imp
+        return "";
+    }
+
 
     //Getters and Setters
 
