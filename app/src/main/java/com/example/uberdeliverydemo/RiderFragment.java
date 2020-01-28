@@ -26,6 +26,7 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.CameraPosition;
+import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -47,7 +48,6 @@ public class RiderFragment extends Fragment {
         // Required empty public constructor
     }
 
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
@@ -63,6 +63,25 @@ public class RiderFragment extends Fragment {
 
         setUpMap();
     }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+        if (requestCode == 1){
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
+                if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED){
+                    locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener);
+
+                    Location lastKnownLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+
+                    updateMap(lastKnownLocation);
+                }
+            }
+        }
+    }
+
+    //Setups
 
     private void initViews(){
         currentLocationButton = (FloatingActionButton) getActivity().findViewById(R.id.currLocationFAB);
@@ -81,6 +100,9 @@ public class RiderFragment extends Fragment {
                     @Override
                     public void onLocationChanged(Location location) {
                         updateMap(location);
+
+                        LatLng userLocation = new LatLng(location.getLatitude(), location.getLongitude());
+                        mMap.addMarker(new MarkerOptions().position(userLocation).title("Yout Location"));
                     }
 
                     @Override
@@ -134,6 +156,9 @@ public class RiderFragment extends Fragment {
         });
     }
 
+
+    //Map operations
+
     private void moveToCurrentLocation(){
 
 
@@ -153,7 +178,11 @@ public class RiderFragment extends Fragment {
                 Location lastKnownLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
 
                 if (lastKnownLocation != null){
+
+                    LatLng userLocation = new LatLng(lastKnownLocation.getLatitude(), lastKnownLocation.getLongitude());
+
                     updateMap(lastKnownLocation);
+                    mMap.addMarker(new MarkerOptions().position(userLocation).title("Yout Location"));
                 }
             }
         }
@@ -166,22 +195,5 @@ public class RiderFragment extends Fragment {
 
         mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(userLocation, 15));
         mMap.addMarker(new MarkerOptions().position(userLocation).title("Yout Location"));
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-
-        if (requestCode == 1){
-            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
-                if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED){
-                    locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener);
-
-                    Location lastKnownLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-
-                    updateMap(lastKnownLocation);
-                }
-            }
-        }
     }
 }

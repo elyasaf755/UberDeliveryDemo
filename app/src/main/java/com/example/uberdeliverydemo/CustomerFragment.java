@@ -37,6 +37,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -172,10 +173,6 @@ public class CustomerFragment extends Fragment {
             double lng = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER).getLongitude();
             setAddress(lat, lng);
         }
-
-
-
-
     }
 
     private void setAddress(double latitude, double longitude) throws IOException {
@@ -221,6 +218,20 @@ public class CustomerFragment extends Fragment {
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
+        //Get Parcels Count
+        DatabaseReference dbRef = database.getReference("Config");
+        dbRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                parcelsCount = dataSnapshot.child("ParcelsCount").getValue(int.class);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
 
             }
         });
@@ -366,9 +377,10 @@ public class CustomerFragment extends Fragment {
 
         if (checkFields() == false){
             addButton.setEnabled(false);
-
+            toastLong("Fail! Please re-check fields.");
             return;
         }
+
 
         Member member = getMemberByEmailAddress(emailAddressTextView.getText().toString());
 
@@ -426,6 +438,8 @@ public class CustomerFragment extends Fragment {
         parcelsCount += 1;
 
         dbref.setValue(parcelsCount);
+
+        toastLong("Success! Your parcel have been added.");
     }
 
     public void findMember(View view){
@@ -434,17 +448,28 @@ public class CustomerFragment extends Fragment {
 
         if (member != null){
             targetNameTextView.setText(member.getFirstName() + " " + member.getLastName());
+            toastShort("Success! Member found!");
         }
         else{
             targetNameTextView.setText("");
-            Toast.makeText(getContext(), "Member not found!!!", Toast.LENGTH_LONG).show();
+            toastShort("Fail! Member not found!");
+        }
+    }
+
+    private void checkInfo(View view){
+
+        if (checkFields() == false){
+            toastShort("Fail! Please re-check fields.");
+        }
+        else{
+            toastShort("Success! You can add now.");
         }
     }
 
 
     //Validations
 
-    public boolean checkFields(){
+    private boolean checkFields(){
         if (checkLocation() && checkWeight() && checkPersonalInfo() && checkType()){
             addButton.setEnabled(true);
             return true;
@@ -455,19 +480,15 @@ public class CustomerFragment extends Fragment {
         }
     }
 
-    public void checkInfo(View view){
-        checkFields();
-    }
-
-    public boolean checkWeight(){
+    private boolean checkWeight(){
         return weightSpinner.getSelectedItem().toString() != "Select Weight";
     }
 
-    public boolean checkType(){
+    private boolean checkType(){
         return typeSpiner.getSelectedItem().toString() != "Select Type";
     }
     //phone + name
-    public boolean checkPersonalInfo(){
+    private boolean checkPersonalInfo(){
         Member member = getMemberByEmailAddress(emailAddressTextView.getText().toString());
         if (member == null){
             return false;
@@ -476,11 +497,11 @@ public class CustomerFragment extends Fragment {
         return (member.getFirstName() + " " + member.getLastName()).equals(targetNameTextView.getText().toString());
     }
 
-    public boolean checkLocation(){
-        return locationTextView.getText().toString() != "" && checkInternetConnection();
+    private boolean checkLocation(){
+        return locationTextView.getText().toString() != "Location" && checkInternetConnection();
     }
 
-    public boolean checkInternetConnection(){
+    private boolean checkInternetConnection(){
         ConnectivityManager connectivityManager = (ConnectivityManager)getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
 
         if(connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE).getState() == NetworkInfo.State.CONNECTED ||
@@ -490,6 +511,16 @@ public class CustomerFragment extends Fragment {
         else{
             return false;
         }
+    }
+
+    //Others
+
+    private void toastLong(String string){
+        Toast.makeText(getContext(), string, Toast.LENGTH_LONG).show();
+    }
+
+    private void toastShort(String string){
+        Toast.makeText(getContext(), string, Toast.LENGTH_SHORT).show();
     }
 
 }
