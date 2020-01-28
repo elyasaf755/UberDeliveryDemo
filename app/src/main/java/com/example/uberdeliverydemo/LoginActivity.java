@@ -165,8 +165,9 @@ public class LoginActivity extends AppCompatActivity {
         String email = emailET.getText().toString();
         String password = passwordET.getText().toString();
 
-        mAuth.signInWithEmailAndPassword(email, password)
-                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+        Toast.makeText(LoginActivity.this, "Authenticating...", Toast.LENGTH_SHORT).show();
+
+        mAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
@@ -181,7 +182,7 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void onLoginSuccess(){
-        Toast.makeText(LoginActivity.this, "Authentication succeed!.", Toast.LENGTH_SHORT).show();
+        Toast.makeText(LoginActivity.this, "Authentication succeed!", Toast.LENGTH_SHORT).show();
         FirebaseUser user = mAuth.getCurrentUser();
 
         MainActivity.member = getMemberByEmailAddress(user.getEmail());

@@ -435,11 +435,6 @@ public class CustomerFragment extends Fragment {
         }
     }
 
-
-
-
-
-
     //Validations
 
     public boolean checkFields(){
