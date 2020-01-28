@@ -22,11 +22,11 @@ public class Member {
         this.emailAddress = emailAdress;
     }
 
-    public Member(String id, String firstName, String lastName, String emailAddress) {
+    public Member(String id, String firstName, String lastName, String emailAddress, String phoneNumber) {
         this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
-        this.phoneNumber = "NULL";
+        this.phoneNumber = phoneNumber;
         this.address = "NULL";
         this.emailAddress = emailAddress;
     }

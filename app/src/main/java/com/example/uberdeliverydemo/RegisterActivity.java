@@ -2,10 +2,22 @@ package com.example.uberdeliverydemo;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
+import android.Manifest;
+import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.location.Location;
+import android.location.LocationManager;
+import android.os.Build;
 import android.os.Bundle;
+import android.telephony.SubscriptionInfo;
+import android.telephony.SubscriptionManager;
+import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
@@ -26,6 +38,11 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.List;
+
+import static android.Manifest.permission.READ_PHONE_NUMBERS;
+import static android.Manifest.permission.READ_PHONE_STATE;
+import static android.Manifest.permission.READ_SMS;
 
 public class RegisterActivity extends AppCompatActivity {
 
@@ -39,9 +56,11 @@ public class RegisterActivity extends AppCompatActivity {
 
     EditText emailET;
     EditText passwordET;
+    EditText repasswordET;
     EditText firstNameET;
     EditText lastNameET;
     EditText idET;
+    EditText phoneNumberET;
 
     //Data
     private int parcelsCount;
@@ -52,13 +71,17 @@ public class RegisterActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
 
-        emailET = (EditText)findViewById(R.id.et_email);
-        passwordET = (EditText)findViewById(R.id.et_password);
-        firstNameET = (EditText)findViewById(R.id.et_firstName);
-        lastNameET = (EditText)findViewById(R.id.et_lastName);
-        idET = (EditText)findViewById(R.id.et_id);
+        initViews();
 
-        // Initialize Firebase Auth
+        setUpFirebase();
+
+        fillFields();
+
+        onStart();
+    }
+
+    private void setUpFirebase(){
+        //Initialize Firebase Auth
         mAuth = FirebaseAuth.getInstance();
 
         //region Firebase Setup
@@ -94,12 +117,30 @@ public class RegisterActivity extends AppCompatActivity {
         });
 
         //endregion
-
-        onStart();
     }
 
-    private Member dataSnapShotToMember(DataSnapshot dataSnapshot){
-        if (dataSnapshot.child("firstName").getValue(String.class) == null){
+    private void initViews(){
+        emailET = (EditText) findViewById(R.id.et_email);
+        passwordET = (EditText) findViewById(R.id.et_password);
+        repasswordET = (EditText) findViewById(R.id.et_repassword);
+        firstNameET = (EditText) findViewById(R.id.et_firstName);
+        lastNameET = (EditText) findViewById(R.id.et_lastName);
+        idET = (EditText) findViewById(R.id.et_id);
+        phoneNumberET = (EditText) findViewById(R.id.et_phoneNumber);
+    }
+
+    private void fillFields(){
+        emailET.setText("b@gmail.com");
+        passwordET.setText("111111111");
+        repasswordET.setText("111111111");
+        firstNameET.setText("b");
+        lastNameET.setText("b");
+        idET.setText("1");
+        phoneNumberET.setText("0546401267");
+    }
+
+    private Member dataSnapShotToMember(DataSnapshot dataSnapshot) {
+        if (dataSnapshot.child("firstName").getValue(String.class) == null) {
             throw new IllegalArgumentException();
         }
 
@@ -121,19 +162,20 @@ public class RegisterActivity extends AppCompatActivity {
         updateUI(currentUser);
     }
 
-    public void updateUI(FirebaseUser firebaseUser){
+    public void updateUI(FirebaseUser firebaseUser) {
 
     }
 
 
-
-    public void onRegClicked(View view){
+    public void onRegClicked(View view) {
         String firstName = firstNameET.getText().toString();
         String lastName = lastNameET.getText().toString();
         String email = emailET.getText().toString();
         String password = passwordET.getText().toString();
         String id = idET.getText().toString();
+        String phoneNumber = phoneNumberET.getText().toString();
 
+        //region Add user to DB
         mAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
@@ -152,15 +194,15 @@ public class RegisterActivity extends AppCompatActivity {
                 // ...
             }
         });
+        //endregion
 
-        register(id, firstName, lastName, email);
+        register(id, firstName, lastName, email, phoneNumber);
 
     }
 
-    public void register(String id, String firstName, String lastName, String emailAddress){
-        Member member = new Member(id, firstName, lastName, emailAddress);
+    public void register(String id, String firstName, String lastName, String emailAddress, String phoneNumber) {
 
-        //Member member = new Member(id, firstName, lastName, "0", "0", emailAddress);
+        Member member = new Member(id, firstName, lastName, emailAddress, phoneNumber);
 
         myRef.child(id).setValue(member);
     }

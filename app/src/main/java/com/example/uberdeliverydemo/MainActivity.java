@@ -10,32 +10,38 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 
-
 import com.example.uberdeliverydemo.Entities.Member;
-import com.google.android.gms.maps.MapFragment;
 
 public class MainActivity extends AppCompatActivity {
 
-    private Button btn1, btn2, historyButton;
+    private Button customerButton, riderButton, historyButton;
+
+    public static Member member;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        btn1 = (Button) findViewById(R.id.btn1);
-        btn2 = (Button) findViewById(R.id.btn2);
+        initViews();
+
+        //Show default fragment
+        addFragment(new RiderFragment(), false, "two");
+    }
+
+    private void initViews(){
+        customerButton = (Button) findViewById(R.id.customerButton);
+        riderButton = (Button) findViewById(R.id.riderButton);
         historyButton = (Button) findViewById(R.id.historyButton);
 
-
-        btn1.setOnClickListener(new View.OnClickListener() {
+        customerButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 addFragment(new CustomerFragment(), false, "one");
             }
         });
 
-        btn2.setOnClickListener(new View.OnClickListener() {
+        riderButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 addFragment(new RiderFragment(), false, "two");
@@ -63,20 +69,6 @@ public class MainActivity extends AppCompatActivity {
 
     public void redirectActivity(){
         Intent intent = new Intent(getApplicationContext(), RiderActivity.class);
-        startActivity(intent);
-    }
-
-    public void mapsClicked(View view){
-        redirectActivity();
-    }
-
-    public void redirectLogin(View view){
-        Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
-        startActivity(intent);
-    }
-
-    public void redirectReg(View view){
-        Intent intent = new Intent(getApplicationContext(), RegisterActivity.class);
         startActivity(intent);
     }
 }

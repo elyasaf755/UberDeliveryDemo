@@ -71,7 +71,7 @@
             android:layout_marginBottom="10dp"
             android:padding="15dp"
             android:fontFamily="@font/roboto_regular"
-            android:inputType="textEmailAddress"
+            android:inputType="number"
             android:background="@drawable/et_custom"
             android:textSize="15sp" />
 
@@ -86,6 +86,20 @@
             android:padding="15dp"
             android:fontFamily="@font/roboto_regular"
             android:inputType="textEmailAddress"
+            android:background="@drawable/et_custom"
+            android:textSize="15sp" />
+
+        <EditText
+            android:id="@+id/et_phoneNumber"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:hint="Phone Number"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:layout_marginBottom="10dp"
+            android:padding="15dp"
+            android:fontFamily="@font/roboto_regular"
+            android:inputType="phone"
             android:background="@drawable/et_custom"
             android:textSize="15sp" />
 

@@ -71,6 +71,8 @@ public class CustomerFragment extends Fragment {
     private TextView deliveryDateTextView;
     private int mYear, mMonth, mDay;
 
+    private String address;
+
     //GPS
     LocationManager locationManager;
     LocationListener locationListener;
@@ -83,57 +85,56 @@ public class CustomerFragment extends Fragment {
     private int parcelsCount;
     private ArrayList<Member> members = new ArrayList<>();
     private ArrayList<Parcel> parcels = new ArrayList<>();
+
     public CustomerFragment() {
         // Required empty public constructor
     }
 
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        //region Location Setup
-        locationManager = (LocationManager)getActivity().getSystemService(Context.LOCATION_SERVICE);
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+
+        //setupLocation();
+        try {
+            setupLocation();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        setupFirebase();
+
+        // Inflate the layout for this fragment
+        return inflater.inflate(R.layout.fragment_customer, container, false);
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        initializeViews(view);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+        if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
+
+            if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED){
+                locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener);
+            }
+        }
+    }
+
+    private void setupLocation() throws IOException {
+
+        locationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
 
         locationListener = new LocationListener() {
             @Override
             public void onLocationChanged(Location location) {
-
-                Geocoder geocoder = new Geocoder(getActivity().getApplicationContext(), Locale.getDefault());
-
                 try {
-                    List<Address> addressList = geocoder.getFromLocation(location.getLatitude(), location.getLongitude(), 1);
-
-                    if (addressList != null && addressList.size() > 0){
-
-                        String address = "";
-
-                        if (addressList.get(0).getThoroughfare() != null){
-                            address += addressList.get(0).getThoroughfare();
-                        }
-
-                        if (addressList.get(0).getSubThoroughfare() != null){
-                            if (address != ""){
-                                address += " " + addressList.get(0).getSubThoroughfare();
-                            }
-                        }
-
-                        if (addressList.get(0).getLocality() != null){
-                            if (address != ""){
-                                address += ", ";
-                            }
-
-                            address += addressList.get(0).getLocality();
-                        }
-
-                        if (addressList.get(0).getCountryName() != null){
-                            if (address != ""){
-                                address += ", ";
-                            }
-                            address += addressList.get(0).getCountryName();
-                        }
-
-                        locationTextView.setText(address);
-                    }
+                    setAddress(location.getLatitude(), location.getLongitude());
                 }
                 catch (IOException e) {
                     e.printStackTrace();
@@ -156,16 +157,39 @@ public class CustomerFragment extends Fragment {
             }
         };
 
-        //if there permission wasnt granted
         if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED){
             //Ask for permission
             ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
         }
-        else{//if permission granted
+        else{
+            //if permission granted
             locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener);
-        }
-        //endregion
 
+            double lat = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER).getLatitude();
+            double lng = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER).getLongitude();
+            setAddress(lat, lng);
+        }
+
+
+
+
+    }
+
+    private void setAddress(double latitude, double longitude) throws IOException {
+        Geocoder geocoder;
+        List<Address> addresses;
+        geocoder = new Geocoder(getActivity(), Locale.getDefault());
+
+        addresses = geocoder.getFromLocation(latitude, longitude, 1);
+
+        address = addresses.get(0).getAddressLine(0);
+
+        if (locationTextView != null){
+            locationTextView.setText(address);
+        }
+    }
+
+    private void setupFirebase(){
         //region Firebase Setup
         database = FirebaseDatabase.getInstance();
 
@@ -198,30 +222,6 @@ public class CustomerFragment extends Fragment {
             }
         });
         //endregion
-
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_customer, container, false);
-    }
-
-    @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-
-        initializeViews(view);
-
-
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-
-        if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
-
-            if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED){
-                locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener);
-            }
-        }
     }
 
     private void initializeViews(View view) {
@@ -234,6 +234,7 @@ public class CustomerFragment extends Fragment {
         addButton.setEnabled(false);
         historyButton=view.findViewById(R.id.historyButton);
         locationTextView = view.findViewById(R.id.packageLocationTextView);
+        locationTextView.setText(address);
         emailAddressTextView = view.findViewById(R.id.emailAddressPlainText);
         emailAddressTextView.setText(null);
         targetNameTextView = view.findViewById(R.id.targetNameTextView);
@@ -309,7 +310,6 @@ public class CustomerFragment extends Fragment {
 
         return null;
     }
-
 
 
     //Converters
@@ -434,6 +434,8 @@ public class CustomerFragment extends Fragment {
             Toast.makeText(getContext(), "Member not found!!!", Toast.LENGTH_LONG).show();
         }
     }
+
+
 
 
 

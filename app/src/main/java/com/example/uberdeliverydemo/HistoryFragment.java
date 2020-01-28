@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
+import com.example.uberdeliverydemo.Entities.Member;
 import com.example.uberdeliverydemo.Entities.Parcel;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
@@ -83,6 +84,15 @@ public class HistoryFragment extends Fragment {
         );
     }
 
+    private Parcel findParcelById(String id){
+        for (Parcel parcel : parcels){
+            if (parcel.getID().equals(id))
+                return parcel;
+        }
+
+        return null;
+    }
+
     private void getHistoryParcels(){
         //Get Parcels
         FirebaseDatabase database = FirebaseDatabase.getInstance();
@@ -90,8 +100,14 @@ public class HistoryFragment extends Fragment {
         myRef.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-                parcels.add(dataSnapShotToParcel(dataSnapshot));
-                adapter.notifyDataSetChanged();
+                Parcel parcel = dataSnapShotToParcel(dataSnapshot);
+
+                Member member = MainActivity.member;
+
+                if (member != null && parcel.getRecipientEmailAddress().equals(member.getEmailAddress())){
+                    parcels.add(parcel);
+                    adapter.notifyDataSetChanged();
+                }
             }
 
             @Override
@@ -101,8 +117,11 @@ public class HistoryFragment extends Fragment {
 
             @Override
             public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
-
+                Parcel parcel = dataSnapShotToParcel(dataSnapshot);
+                parcels.remove(findParcelById(parcel.getID()));
+                adapter.notifyDataSetChanged();
             }
+
 
             @Override
             public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
