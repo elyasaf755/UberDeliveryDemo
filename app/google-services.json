@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "781423025130",
+    "firebase_url": "https://uberdeliverydemo.firebaseio.com",
+    "project_id": "uberdeliverydemo",
+    "storage_bucket": "uberdeliverydemo.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:781423025130:android:d89dabb073209355def093",
+        "android_client_info": {
+          "package_name": "com.example.uberdeliverydemo"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "781423025130-poi1dd2ntj6ju1890mablobmurbbla34.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.uberdeliverydemo",
+            "certificate_hash": "60277e2e65fdc09105ed26a85205ffe00a362193"
+          }
+        },
+        {
+          "client_id": "781423025130-ghf1ijpkv63i8h8dik5o84n8liisntlb.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBaZ9ELx_1xW7fAhLVUIhIkh8tmotSgm84"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "781423025130-ghf1ijpkv63i8h8dik5o84n8liisntlb.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
