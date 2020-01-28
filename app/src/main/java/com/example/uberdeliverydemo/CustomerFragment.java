@@ -126,6 +126,9 @@ public class CustomerFragment extends Fragment {
         }
     }
 
+
+    //Setups
+
     private void setupLocation() throws IOException {
 
         locationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
@@ -296,6 +299,9 @@ public class CustomerFragment extends Fragment {
         });
     }
 
+
+    //Search Operations
+
     private String getParcelId(){
 
         return String.valueOf(parcelsCount);
@@ -434,6 +440,7 @@ public class CustomerFragment extends Fragment {
             Toast.makeText(getContext(), "Member not found!!!", Toast.LENGTH_LONG).show();
         }
     }
+
 
     //Validations
 

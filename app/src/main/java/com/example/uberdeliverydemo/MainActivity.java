@@ -66,9 +66,4 @@ public class MainActivity extends AppCompatActivity {
         ft.replace(R.id.container_frame_back, fragment, tag);
         ft.commitAllowingStateLoss();
     }
-
-    public void redirectActivity(){
-        Intent intent = new Intent(getApplicationContext(), RiderActivity.class);
-        startActivity(intent);
-    }
 }
