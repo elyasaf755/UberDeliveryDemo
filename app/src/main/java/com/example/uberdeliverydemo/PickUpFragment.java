@@ -12,11 +12,17 @@ import androidx.fragment.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import com.example.uberdeliverydemo.Entities.Parcel;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
+import java.util.ArrayList;
 
 public class PickUpFragment extends Fragment {
 
@@ -58,21 +64,25 @@ public class PickUpFragment extends Fragment {
         initViews();
     }
 
+    private void updateParcel(){
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+
+        DatabaseReference myRef = database.getReference("Parcel").child(mParcel.getID()).child("deliveryPersonName");
+        myRef.setValue(MainActivity.member.getFirstName() + " " + MainActivity.member.getLastName());
+
+        myRef = database.getReference("Parcel").child(mParcel.getID()).child("status");
+        myRef.setValue(Parcel.Status.CollectionOffered);
+    }
+
     private void initViews(){
-        pickUpButton = getActivity().findViewById(R.id.pickUpButton);
-        pickUpButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-
-
-                FragmentManager manager = getActivity().getSupportFragmentManager();
-                FragmentTransaction ft = manager.beginTransaction();
-
-                ft.replace(R.id.container_frame_back, new RiderFragment());
-                ft.commitAllowingStateLoss();
-            }
-        });
+            pickUpButton = getActivity().findViewById(R.id.pickUpButton);
+            pickUpButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    updateParcel();
+                    redirectFragment(new RiderFragment());
+                }
+            });
 
         fragileCheckBox = getActivity().findViewById(R.id.isFragileCheckBox);
         fragileCheckBox.setChecked(mParcel.getFragile());
@@ -94,6 +104,14 @@ public class PickUpFragment extends Fragment {
 
         phoneNumberTextView = getActivity().findViewById(R.id.targetPhoneNumberTextView);
         phoneNumberTextView.setText(mParcel.getRecipientPhoneNumber());
+    }
+
+    private void redirectFragment(Fragment fragment){
+        FragmentManager manager = getActivity().getSupportFragmentManager();
+        FragmentTransaction ft = manager.beginTransaction();
+
+        ft.replace(R.id.container_frame_back, fragment);
+        ft.commitAllowingStateLoss();
     }
 
 }

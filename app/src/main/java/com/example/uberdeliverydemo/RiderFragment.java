@@ -138,9 +138,9 @@ public class RiderFragment extends Fragment {
                 locationListener = new LocationListener() {
                     @Override
                     public void onLocationChanged(Location location) {
-                        updateMap(location);
+                        //updateMap(location);
                         currentLocation = location;
-                        LatLng userLocation = new LatLng(location.getLatitude(), location.getLongitude());
+                        //LatLng userLocation = new LatLng(location.getLatitude(), location.getLongitude());
                     }
 
                     @Override
@@ -206,7 +206,8 @@ public class RiderFragment extends Fragment {
 
                 parcels.add(parcel);
                 try {
-                    addMarker(parcel);
+                    if (parcel.getStatus() == Parcel.Status.Registered)
+                        addMarker(parcel);
                 }
                 catch (IOException e) {
                     e.printStackTrace();
@@ -311,7 +312,8 @@ public class RiderFragment extends Fragment {
 
         for (Parcel parcel : parcels){
             try {
-                addMarker(parcel);
+                if (parcel.getStatus() == Parcel.Status.Registered)
+                    addMarker(parcel);
             }
             catch (IOException e) {
                 e.printStackTrace();
