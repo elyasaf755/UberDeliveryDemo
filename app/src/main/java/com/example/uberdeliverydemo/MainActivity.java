@@ -63,6 +63,7 @@ public class MainActivity extends AppCompatActivity {
         if (addToBackStack) {
             ft.addToBackStack(tag);
         }
+
         ft.replace(R.id.container_frame_back, fragment, tag);
         ft.commitAllowingStateLoss();
     }

@@ -147,6 +147,7 @@ public class LoginActivity extends AppCompatActivity {
                 dataSnapshot.child("lastName").getValue(String.class),
                 dataSnapshot.child("phoneNumber").getValue(String.class),
                 dataSnapshot.child("address").getValue(String.class),
+                dataSnapshot.child("latLng").getValue(String.class),
                 dataSnapshot.child("emailAddress").getValue(String.class)
         );
     }

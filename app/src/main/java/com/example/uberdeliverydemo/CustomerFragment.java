@@ -18,6 +18,8 @@ import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -32,6 +34,7 @@ import android.widget.Toast;
 
 import com.example.uberdeliverydemo.Entities.Member;
 import com.example.uberdeliverydemo.Entities.Parcel;
+import com.google.android.gms.maps.model.LatLng;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -47,32 +50,24 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
-
-/**
- * A simple {@link Fragment} subclass.
- */
 public class CustomerFragment extends Fragment {
 
-    Button findButton;
-    Button checkButton;
-    Button addAddButton;
+    private Button findButton;
+    private Button checkButton;
+    private Button addAddButton;
 
     private CheckBox isFragileCheckBox;
-    private String[] weightspinerValues = {"0.5", "1", "5", "20"};
     private Button addButton;
     private Spinner weightSpinner;
     private Spinner typeSpiner;
-    private TextView textView;
     private TextView locationTextView;
     private TextView emailAddressTextView;
     private TextView targetNameTextView;
     private Button historyButton;
-    private Calendar calendar;
-    private Button reciveDateButton;
     private TextView deliveryDateTextView;
-    private int mYear, mMonth, mDay;
 
     private String address;
+    private LatLng latLng;
 
     //GPS
     LocationManager locationManager;
@@ -87,10 +82,18 @@ public class CustomerFragment extends Fragment {
     private ArrayList<Member> members = new ArrayList<>();
     private ArrayList<Parcel> parcels = new ArrayList<>();
 
+    private Context context;
+
     public CustomerFragment() {
         // Required empty public constructor
     }
 
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+
+        this.context = context;
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -98,7 +101,8 @@ public class CustomerFragment extends Fragment {
         //setupLocation();
         try {
             setupLocation();
-        } catch (IOException e) {
+        }
+        catch (IOException e) {
             e.printStackTrace();
         }
 
@@ -121,7 +125,7 @@ public class CustomerFragment extends Fragment {
 
         if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
 
-            if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED){
+            if (ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED){
                 locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener);
             }
         }
@@ -138,7 +142,8 @@ public class CustomerFragment extends Fragment {
             @Override
             public void onLocationChanged(Location location) {
                 try {
-                    setAddress(location.getLatitude(), location.getLongitude());
+                    getCurrentAddress(new LatLng(location.getLatitude(), location.getLongitude()));
+                    //setAddress(location.getLatitude(), location.getLongitude());
                 }
                 catch (IOException e) {
                     e.printStackTrace();
@@ -161,7 +166,7 @@ public class CustomerFragment extends Fragment {
             }
         };
 
-        if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED){
+        if (ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED){
             //Ask for permission
             ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
         }
@@ -169,24 +174,67 @@ public class CustomerFragment extends Fragment {
             //if permission granted
             locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener);
 
-            double lat = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER).getLatitude();
-            double lng = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER).getLongitude();
-            setAddress(lat, lng);
+            Location lastKnownLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+
+            double lat;
+            double lng;
+
+            if (lastKnownLocation != null){
+                lat = lastKnownLocation.getLatitude();
+                lng = lastKnownLocation.getLongitude();
+
+                getCurrentAddress(new LatLng(lat, lng));
+                //setAddress(lat, lng);
+            }
         }
     }
 
     private void setAddress(double latitude, double longitude) throws IOException {
         Geocoder geocoder;
         List<Address> addresses;
-        geocoder = new Geocoder(getActivity(), Locale.getDefault());
+        geocoder = new Geocoder(context, Locale.getDefault());
 
         addresses = geocoder.getFromLocation(latitude, longitude, 1);
 
         address = addresses.get(0).getAddressLine(0);
+        latLng = new LatLng(latitude, longitude);
 
         if (locationTextView != null){
             locationTextView.setText(address);
         }
+    }
+
+    public LatLng getLatLngFromAddress(Context context,String strAddress) {
+
+        Geocoder coder = new Geocoder(context);
+        List<Address> address;
+        LatLng p1 = null;
+
+        try {
+            // May throw an IOException
+            address = coder.getFromLocationName(strAddress, 5);
+            if (address == null) {
+                return null;
+            }
+
+            Address location = address.get(0);
+            p1 = new LatLng(location.getLatitude(), location.getLongitude() );
+
+        } catch (IOException ex) {
+
+            ex.printStackTrace();
+        }
+
+        return p1;
+    }
+
+    private String getCurrentAddress(LatLng latLng) throws IOException {
+        Geocoder geocoder;
+        geocoder = new Geocoder(context, Locale.getDefault());
+
+        address = geocoder.getFromLocation(latLng.latitude, latLng.longitude, 1).get(0).getAddressLine(0);
+
+        return address;
     }
 
     private void setupFirebase(){
@@ -248,7 +296,7 @@ public class CustomerFragment extends Fragment {
         addButton.setEnabled(false);
         historyButton=view.findViewById(R.id.historyButton);
         locationTextView = view.findViewById(R.id.packageLocationTextView);
-        locationTextView.setText(address);
+        locationTextView.setText("Destination Address");
         emailAddressTextView = view.findViewById(R.id.emailAddressPlainText);
         emailAddressTextView.setText(null);
         targetNameTextView = view.findViewById(R.id.targetNameTextView);
@@ -342,6 +390,7 @@ public class CustomerFragment extends Fragment {
                 dataSnapshot.child("lastName").getValue(String.class),
                 dataSnapshot.child("phoneNumber").getValue(String.class),
                 dataSnapshot.child("address").getValue(String.class),
+                dataSnapshot.child("latLng").getValue(String.class),
                 dataSnapshot.child("emailAddress").getValue(String.class)
         );
     }
@@ -356,8 +405,8 @@ public class CustomerFragment extends Fragment {
                 dataSnapshot.child("type").getValue(String.class),
                 dataSnapshot.child("fragile").getValue(Boolean.class),
                 dataSnapshot.child("weight").getValue(String.class),
-                dataSnapshot.child("distributionCenterAddress").getValue(String.class),
-                dataSnapshot.child("recipientAddress").getValue(String.class),
+                dataSnapshot.child("fromAddress").getValue(String.class),
+                dataSnapshot.child("toAddress").getValue(String.class),
                 dataSnapshot.child("recipientFirstName").getValue(String.class),
                 dataSnapshot.child("recipientLastName").getValue(String.class),
                 dataSnapshot.child("recipientPhoneNumber").getValue(String.class),
@@ -366,8 +415,23 @@ public class CustomerFragment extends Fragment {
                 dataSnapshot.child("deliveryDate").getValue(String.class),
                 dataSnapshot.child("shippedDate").getValue(String.class),
                 dataSnapshot.child("deliveryGuyName").getValue(String.class),
-                dataSnapshot.child("id").getValue(String.class)
+                dataSnapshot.child("id").getValue(String.class),
+                dataSnapshot.child("toAddressLatLng").getValue(String.class),
+                dataSnapshot.child("senderEmailAddress").getValue(String.class),
+                dataSnapshot.child("fromAddressLatLng").getValue(String.class)
         );
+    }
+
+    private LatLng stringToLatLng(String latLngString){
+        String[] latlong =  latLngString.split(",");
+        int s = latlong[0].indexOf('(') + 1;
+        int t = latlong[1].indexOf(')') - 1;
+        latlong[0] = latlong[0].substring(s);
+        latlong[1] = latlong[1].substring(0, t);
+        double lat = Double.parseDouble(latlong[0]);
+        double lng = Double.parseDouble(latlong[1]);
+
+        return new LatLng(lat, lng);
     }
 
 
@@ -389,7 +453,7 @@ public class CustomerFragment extends Fragment {
                 typeSpiner.getSelectedItem().toString(),
                 isFragileCheckBox.isChecked(),
                 weightSpinner.getSelectedItem().toString(),
-                locationTextView.getText().toString(),
+                MainActivity.member.getAddress(),
                 member.getAddress(),
                 member.getFirstName(),
                 member.getLastName(),
@@ -399,7 +463,10 @@ public class CustomerFragment extends Fragment {
                 "NOT YET DELIVERED",
                 "NOT YET SHIPPED",
                 "NOT YET TAKEN BY DELIVERY GUY",
-                getParcelId()
+                getParcelId(),
+                member.getLatLng(),
+                MainActivity.member.getEmailAddress(),
+                MainActivity.member.getLatLng()
         );
 
         //Get Parcels
@@ -440,6 +507,8 @@ public class CustomerFragment extends Fragment {
         dbref.setValue(parcelsCount);
 
         toastLong("Success! Your parcel have been added.");
+
+        replaceFragment(new RiderFragment());
     }
 
     public void findMember(View view){
@@ -448,6 +517,7 @@ public class CustomerFragment extends Fragment {
 
         if (member != null){
             targetNameTextView.setText(member.getFirstName() + " " + member.getLastName());
+            locationTextView.setText(member.getAddress());
             toastShort("Success! Member found!");
         }
         else{
@@ -464,6 +534,14 @@ public class CustomerFragment extends Fragment {
         else{
             toastShort("Success! You can add now.");
         }
+    }
+
+    private void replaceFragment(Fragment fragment){
+        FragmentManager manager = getActivity().getSupportFragmentManager();
+        FragmentTransaction ft = manager.beginTransaction();
+
+        ft.replace(R.id.container_frame_back, fragment);
+        ft.commitAllowingStateLoss();
     }
 
 
@@ -516,11 +594,11 @@ public class CustomerFragment extends Fragment {
     //Others
 
     private void toastLong(String string){
-        Toast.makeText(getContext(), string, Toast.LENGTH_LONG).show();
+        Toast.makeText(context, string, Toast.LENGTH_LONG).show();
     }
 
     private void toastShort(String string){
-        Toast.makeText(getContext(), string, Toast.LENGTH_SHORT).show();
+        Toast.makeText(context, string, Toast.LENGTH_SHORT).show();
     }
 
 }

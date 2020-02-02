@@ -23,8 +23,8 @@ public class Parcel {
     private String type;
     private boolean isFragile;
     private String weight;
-    private String distributionCenterAddress;
-    private String recipientAddress;
+    private String fromAddress;
+    private String toAddress;
     private String recipientFirstName;
     private String recipientLastName;
     private String recipientPhoneNumber;
@@ -34,20 +34,23 @@ public class Parcel {
     private String deliveryDate ;//delivered to customer
     private String deliveryGuyName;
     private String id;
+    private String toAddressLatLng;
+    private String senderEmailAddress;
+    private String fromAddressLatLng;
 
     //Constructors
-    public Parcel(Status status, String type, Boolean isFragile, String weight, String distributionCenterAddress,
-                  String recipientAddress, String recipientFirstName, String recipientLastName, String recipientPhoneNumber,
+    public Parcel(Status status, String type, Boolean isFragile, String weight, String fromAddress,
+                  String toAddress, String recipientFirstName, String recipientLastName, String recipientPhoneNumber,
                   String recipientEmailAddress,
                   String receivedDate, String deliveryDate, String shippedDate,
-                  String deliveryPersonName, String parcelId) {
+                  String deliveryPersonName, String parcelId, String toAddressLatLng, String senderEmailAddress, String fromAddressLatLng) {
 
         this.status = status;
         this.type = type;
         this.isFragile = isFragile;
         this.weight = weight;
-        this.distributionCenterAddress = distributionCenterAddress;
-        this.recipientAddress = recipientAddress;
+        this.fromAddress = fromAddress;
+        this.toAddress = toAddress;
         this.recipientFirstName = recipientFirstName;
         this.recipientLastName = recipientLastName;
         this.recipientPhoneNumber = recipientPhoneNumber;
@@ -57,13 +60,17 @@ public class Parcel {
         this.deliveryDate = deliveryDate;
         this.deliveryGuyName = deliveryPersonName;
         this.id = parcelId;
+        this.toAddressLatLng = toAddressLatLng;
+        this.senderEmailAddress = senderEmailAddress;
+        this.fromAddressLatLng = fromAddressLatLng;
 
     }
 
     public Parcel() {
         this(null,null,null,null,null, null,
                 null,null,null,null,
-                null,null,null,null, null);
+                null,null,null,null, null,
+                null, null, null);
     }
 
     //Getters & Setters
@@ -103,21 +110,21 @@ public class Parcel {
     }
 
 
-    public String getDistributionCenterAddress() {
-        return distributionCenterAddress;
+    public String getFromAddress() {
+        return fromAddress;
     }
 
-    public void setDistributionCenterAddress(String distributionCenterAddress) {
-        this.distributionCenterAddress = distributionCenterAddress;
+    public void setFromAddress(String fromAddress) {
+        this.fromAddress = fromAddress;
     }
 
 
-    public String getRecipientAddress() {
-        return recipientAddress;
+    public String getToAddress() {
+        return toAddress;
     }
 
-    public void setRecipientAddress(String recipientAddress) {
-        this.recipientAddress = recipientAddress;
+    public void setToAddress(String toAddress) {
+        this.toAddress = toAddress;
     }
 
 
@@ -201,12 +208,35 @@ public class Parcel {
         this.id = id;
     }
 
+    public String getToAddressLatLng() {
+        return toAddressLatLng;
+    }
+
+    public void setToAddressLatLng(String toAddressLatLng) {
+        this.toAddressLatLng = toAddressLatLng;
+    }
+
+    public String getSenderEmailAddress() {
+        return senderEmailAddress;
+    }
+
+    public void setSenderEmailAddress(String senderEmailAddress) {
+        this.senderEmailAddress = senderEmailAddress;
+    }
+
+    public String getFromAddressLatLng() {
+        return fromAddressLatLng;
+    }
+
+    public void setFromAddressLatLng(String fromAddressLatLng) {
+        this.fromAddressLatLng = fromAddressLatLng;
+    }
 
     //Overrides
 
     @NonNull
     @Override
     public String toString() {
-        return "Status: " + getStatus() + ".\nParcelID:" + getID() + ".\n" + "Address: " + recipientAddress;
+        return "Status: " + getStatus() + ".\nParcelID:" + getID() + ".\n" + "To address: " + toAddress;
     }
 }

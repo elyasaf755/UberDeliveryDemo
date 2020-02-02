@@ -15,6 +15,7 @@ import android.widget.ListView;
 
 import com.example.uberdeliverydemo.Entities.Member;
 import com.example.uberdeliverydemo.Entities.Parcel;
+import com.google.android.gms.maps.model.LatLng;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -50,6 +51,10 @@ public class HistoryFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        setupFirebase(view);
+    }
+
+    private void setupFirebase(View view){
         parcelsListView = view.findViewById(R.id.parcelsListView);
         adapter = new ArrayAdapter(view.getContext(),android.R.layout.simple_expandable_list_item_1, parcels);
 
@@ -70,8 +75,8 @@ public class HistoryFragment extends Fragment {
                 dataSnapshot.child("type").getValue(String.class),
                 dataSnapshot.child("fragile").getValue(Boolean.class),
                 dataSnapshot.child("weight").getValue(String.class),
-                dataSnapshot.child("distributionCenterAddress").getValue(String.class),
-                dataSnapshot.child("recipientAddress").getValue(String.class),
+                dataSnapshot.child("fromAddress").getValue(String.class),
+                dataSnapshot.child("toAddress").getValue(String.class),
                 dataSnapshot.child("recipientFirstName").getValue(String.class),
                 dataSnapshot.child("recipientLastName").getValue(String.class),
                 dataSnapshot.child("recipientPhoneNumber").getValue(String.class),
@@ -80,8 +85,19 @@ public class HistoryFragment extends Fragment {
                 dataSnapshot.child("deliveryDate").getValue(String.class),
                 dataSnapshot.child("shippedDate").getValue(String.class),
                 dataSnapshot.child("deliveryGuyName").getValue(String.class),
-                dataSnapshot.child("id").getValue(String.class)
+                dataSnapshot.child("id").getValue(String.class),
+                dataSnapshot.child("toAddressLatLng").getValue(String.class),
+                dataSnapshot.child("senderEmailAddress").getValue(String.class),
+                dataSnapshot.child("fromAddressLatLng").getValue(String.class)
         );
+    }
+
+    private LatLng stringToLatLng(String latLngString){
+        String[] latlong =  latLngString.split(",");
+        double lat = Double.parseDouble(latlong[0]);
+        double lng = Double.parseDouble(latlong[1]);
+
+        return new LatLng(lat, lng);
     }
 
     private Parcel findParcelById(String id){
@@ -104,7 +120,7 @@ public class HistoryFragment extends Fragment {
 
                 Member member = MainActivity.member;
 
-                if (member != null && parcel.getRecipientEmailAddress().equals(member.getEmailAddress())){
+                if (member != null && parcel.getSenderEmailAddress().equals(member.getEmailAddress())){
                     parcels.add(parcel);
                     adapter.notifyDataSetChanged();
                 }

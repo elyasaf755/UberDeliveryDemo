@@ -5,46 +5,31 @@
     android:layout_height="match_parent"
     tools:context=".CustomerActivity">
 
-    <Button
-        android:id="@+id/addButton"
-        android:layout_width="127dp"
-        android:layout_height="48dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginBottom="72dp"
-        android:enabled="false"
-        android:text="Add Parcel"
-        android:typeface="sans"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        tools:ignore="MissingConstraints"
-        tools:textColor="?android:attr/navigationBarColor"
-        tools:textColorLink="@android:color/holo_blue_bright" />
-
-    <Spinner
-        android:id="@+id/packageTypeSpinner2"
-        android:layout_width="200dp"
-        android:layout_height="35dp"
-        android:layout_marginStart="100dp"
-        android:layout_marginTop="10dp"
-        android:layout_marginEnd="100dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/packageWeightSpinner" />
-
-    <Spinner
-        android:id="@+id/packageWeightSpinner"
+    <TextView
+        android:id="@+id/packageWeightTextView"
         android:layout_width="200dp"
         android:layout_height="35dp"
         android:layout_marginStart="100dp"
         android:layout_marginTop="12dp"
         android:layout_marginEnd="100dp"
+        android:text="Weight"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/isFragileCheckBox" />
+
+    <TextView
+        android:id="@+id/packageTypeTextView"
+        android:layout_width="200dp"
+        android:layout_height="35dp"
+        android:layout_marginStart="100dp"
+        android:layout_marginTop="12dp"
+        android:layout_marginEnd="100dp"
+        android:text="Type"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/packageWeightTextView" />
 
     <TextView
         android:id="@+id/packageLocationTextView"
@@ -53,38 +38,35 @@
         android:layout_marginStart="100dp"
         android:layout_marginTop="12dp"
         android:layout_marginEnd="100dp"
-        android:enabled="false"
         android:text="Location"
         android:textColor="@android:color/darker_gray"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/emailAddressPlainText" />
+        app:layout_constraintTop_toBottomOf="@+id/packageTypeTextView" />
 
-    <EditText
-        android:id="@+id/emailAddressPlainText"
+    <TextView
+        android:id="@+id/emailAddressTextView"
         android:layout_width="200dp"
-        android:layout_height="40dp"
+        android:layout_height="35dp"
         android:layout_marginStart="100dp"
         android:layout_marginTop="12dp"
         android:layout_marginEnd="100dp"
-        android:editable="true"
-        android:ems="10"
-        android:hint="Email Address"
-        android:inputType="textEmailAddress"
-        android:textSize="15sp"
+        android:text="Email Address"
+        android:textColor="@android:color/darker_gray"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/packageTypeSpinner2" />
+        app:layout_constraintTop_toBottomOf="@+id/packageLocationTextView" />
 
     <CheckBox
         android:id="@+id/isFragileCheckBox"
         android:layout_width="200dp"
         android:layout_height="35dp"
         android:layout_marginStart="100dp"
-        android:layout_marginTop="32dp"
+        android:layout_marginTop="92dp"
         android:layout_marginEnd="100dp"
+        android:enabled="false"
         android:text="Fragile"
         android:textColorLink="@android:color/black"
         app:layout_constraintEnd_toEndOf="parent"
@@ -94,22 +76,6 @@
         tools:ignore="MissingConstraints"
         tools:textColor="@android:color/black" />
 
-    <EditText
-        android:id="@+id/deliveryDateTextView"
-        android:layout_width="200dp"
-        android:layout_height="40dp"
-        android:layout_marginStart="100dp"
-        android:layout_marginTop="12dp"
-        android:layout_marginEnd="100dp"
-        android:ems="10"
-        android:enabled="false"
-        android:inputType="date"
-        android:textSize="15sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/targetNameTextView" />
-
     <TextView
         android:id="@+id/targetNameTextView"
         android:layout_width="200dp"
@@ -117,33 +83,35 @@
         android:layout_marginStart="100dp"
         android:layout_marginTop="12dp"
         android:layout_marginEnd="100dp"
-        android:enabled="false"
         android:hint="Target Name"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/packageLocationTextView" />
+        app:layout_constraintTop_toBottomOf="@+id/emailAddressTextView" />
 
-    <Button
-        android:id="@+id/findButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="12dp"
-        android:text="find!"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/emailAddressPlainText"
-        tools:layout_editor_absoluteY="171dp" />
-
-    <Button
-        android:id="@+id/checkButton"
-        android:layout_width="158dp"
-        android:layout_height="49dp"
+    <TextView
+        android:id="@+id/targetPhoneNumberTextView"
+        android:layout_width="200dp"
+        android:layout_height="35dp"
         android:layout_marginStart="100dp"
+        android:layout_marginTop="12dp"
         android:layout_marginEnd="100dp"
-        android:layout_marginBottom="8dp"
-        android:text="Check info"
-        app:layout_constraintBottom_toTopOf="@+id/addButton"
+        android:hint="Target Name"
+        android:text="Phone Number"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/targetNameTextView" />
+
+    <Button
+        android:id="@+id/pickUpButton"
+        android:layout_width="109dp"
+        android:layout_height="42dp"
+        android:layout_marginTop="56dp"
+        android:text="pick up!"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/targetPhoneNumberTextView" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

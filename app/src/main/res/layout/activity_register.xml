@@ -6,6 +6,8 @@
     android:layout_height="match_parent"
     tools:context=".RegisterActivity">
 
+
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -102,6 +104,12 @@
             android:inputType="phone"
             android:background="@drawable/et_custom"
             android:textSize="15sp" />
+
+        <fragment android:id="@+id/autocomplete_address_fragment"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:name="com.google.android.libraries.places.widget.AutocompleteSupportFragment"
+            />
 
         <EditText
             android:id="@+id/et_password"

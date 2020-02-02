@@ -2,6 +2,8 @@ package com.example.uberdeliverydemo.Entities;
 
 import androidx.annotation.Nullable;
 
+import com.google.android.gms.maps.model.LatLng;
+
 public class Member {
     //Fields
     private String id;
@@ -9,26 +11,21 @@ public class Member {
     private String lastName;
     private String phoneNumber;
     private String address;
+    private String latLng;
     private String emailAddress;
 
 
     //Constructors
-    public Member(String id, String firstName, String lastName, String phoneNumber, String address, String emailAdress) {
+
+    public Member(String id, String firstName, String lastName, String phoneNumber, String address, String latLng, String emailAddress) {
         this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
         this.phoneNumber = phoneNumber;
         this.address = address;
-        this.emailAddress = emailAdress;
-    }
-
-    public Member(String id, String firstName, String lastName, String emailAddress, String phoneNumber) {
-        this.id = id;
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.phoneNumber = phoneNumber;
-        this.address = "NULL";
+        this.latLng = latLng;
         this.emailAddress = emailAddress;
+
     }
 
     private String getPhoneNumberFromOS() {
@@ -89,6 +86,13 @@ public class Member {
         this.emailAddress = emailAddress;
     }
 
+    public String getLatLng() {
+        return latLng;
+    }
+
+    public void setLatLng(String latLng) {
+        this.latLng = latLng;
+    }
 
     //Overrides
 
